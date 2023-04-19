@@ -18,7 +18,7 @@
     {
         <PaginationComponent TItem="OrderWithStatus"
                              Items="ordersWithStatus.OrderBy(o => o.Order.CreatedTime).ToList()"
-                             ItemLabel='item => new MarkupString($"{item.Order.CreatedTime:ddd,MMM. d,yyyy}")'>
+                             ItemLabel='(item,page) => new MarkupString($"{page}-{item.Order.CreatedTime:ddd,MMM. d,yyyy}")'>
             <ItemContent>
                 <div class="list-group-item bg-secondary text-white">
                     <div class="col">

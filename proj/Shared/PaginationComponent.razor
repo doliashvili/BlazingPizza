@@ -14,12 +14,13 @@
         <li class="page-item @(previousDisabled ? "disabled" : "")" disabled="@previousDisabled">
             <a class="page-link" @onclick="DecrementIndex"><span>⬅️</span></a>
         </li>
-        @foreach ((int index,TItem item) in Items.Select((item, index) => (index,item)))
+        @foreach ((TItem item,int index) in GetForRenderPages())
         {
             var isActive = index == selectedIndex;
+            var page = index + 1;
             <li class="page-item @(isActive ? "active" : "")">
                 <a class="page-link" @onclick="@(() => SetIndex(index))">
-                    @ItemLabel(item);
+                    @ItemLabel(item,page);
                 </a>
             </li>
         }
@@ -42,7 +43,7 @@
     public RenderFragment<TItem> ItemContent { get; set; }
 
     [Parameter,EditorRequired]
-    public Func<TItem,MarkupString> ItemLabel { get; set; }
+    public Func<TItem,int,MarkupString> ItemLabel { get; set; }
 
     int selectedIndex;
 
@@ -52,7 +53,22 @@
     void IncrementIndex() => selectedIndex++;
     void DecrementIndex() => selectedIndex--;
     void SetIndex(int index) => selectedIndex = index;
-    
+
+    public List<(TItem item,int index)> GetForRenderPages()
+    {
+        var list = new List<(TItem item,int index)>(3);
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (i== selectedIndex-1 || i == selectedIndex || i == selectedIndex +1)
+            {
+                list.Add((Items[i],i));
+            }
+        }
+
+        return list;
+    }
+
+
     protected override void OnInitialized()
     {
         selectedIndex = Items.Count - 1;
